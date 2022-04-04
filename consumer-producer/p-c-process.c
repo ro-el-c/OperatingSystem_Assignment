@@ -23,32 +23,35 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    for (int i = 0; i < 100; i++)
+    srand(time(NULL));
+    pid = fork();
+    if (pid == -1)
     {
-        srand(time(NULL));
-        pid = fork();
-        if (pid == -1)
-        {
-            perror("Failed to fork\n");
-            return 0;
-        }
+        perror("Failed to fork\n");
+        return 0;
+    }
 
-        if (pid == 0)
+    if (pid == 0)
+    {
+        for (int i = 0; i < 100; i++)
         {
             int temp = rand();
 
-            fprintf(stderr, "%d : Process[%ld] has made random number %d\n", i + 1, (long)getpid(), temp);
+            fprintf(stderr, "%d - Process[%ld] has made random number : %d\n", i + 1, (long)getpid(), temp);
 
             sprintf(bufs, "%d\n", temp);
             write(fd[1], bufs, BUFSIZE);
-            exit(1);
+            usleep(150000); // ms 단위로 sleep
         }
-        else
+        exit(1);
+    }
+    else
+    {
+        for (int i = 0; i < 100; i++)
         {
             read(fd[0], bufin, BUFSIZE);
             bufInt = atoi(bufin);
             fprintf(stderr, "Process [%ld] has got number from child : %d.\n\n\n", (long)getpid(), bufInt);
-            usleep(150000); // ms 단위로 sleep
         }
     }
     return 0;
