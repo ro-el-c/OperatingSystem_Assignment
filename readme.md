@@ -1,7 +1,7 @@
 # OperatingSystem_Assignment
 ### 2022 3-1 운영체제 프로그래밍 과제
 
-> #### consumer-producer
+> #### consumer-producer (=producer-consumer)
 >> Process 방식
 >    - fork 로 자식 프로세스 하나 생성시킨 후, 두 프로세스 간의 pipe 기능을 통해 producer-consumer 구현
 >> Thread 방식
