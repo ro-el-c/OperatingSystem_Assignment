@@ -6,6 +6,7 @@
 *.pdf
 *.docx
 *.out
+test.c
 
 # Created by https://www.toptal.com/developers/gitignore/api/linux,windows,c,visualstudiocode,vim
 # Edit at https://www.toptal.com/developers/gitignore?templates=linux,windows,c,visualstudiocode,vim
