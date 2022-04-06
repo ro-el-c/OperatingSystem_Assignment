@@ -34,7 +34,7 @@ int main()
 
 void *producer_thread()
 {
-    for (int i = 0; i < 100; i++)
+    while (1)
     {
         shareNum = rand();
 
@@ -45,7 +45,7 @@ void *producer_thread()
 
 void *consumer_thread()
 {
-    for (int i = 0; i < 100; i++)
+    while (1)
     {
         fprintf(stderr, "[Consumer thread] Number I got : %d\n\n", shareNum);
         usleep(2000000);
