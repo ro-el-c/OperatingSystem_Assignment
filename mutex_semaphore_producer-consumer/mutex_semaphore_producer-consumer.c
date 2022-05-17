@@ -81,7 +81,7 @@ void *consumer(void *arg)
         while(counter == 0) usleep(10000);
         */
 
-        out = (out + 1) % MAX_BUF; // circular buffer를 위한 mod 연산
+        out = (out + 1) % MAX_BUF; // 공유 자원 접근을 위한 임계구역 설정
         data = buffer[out];
 
         counter--; // 공유 변수 값 설정
