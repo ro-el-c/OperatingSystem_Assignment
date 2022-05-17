@@ -16,6 +16,9 @@ int in = -1, out = -1; // data 저장 및 빼낼 위치
 
 // 1번 조건 mutex 생성 _ 강의 자료의 cs semaphore 대신 사용
 pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
+/* semaphore 사용으로 필요 X */
+// pthread_cond_t buffer_has_space = PTHREAD_COND_INITIALIZER;
+// pthread_cond_t buffer_has_data = PTHREAD_COND_INITIALIZER;
 
 // 2번 조건 semaphore 생성
 // buffer의 상태에 다른 대기 및 실행 재개 설정
@@ -40,7 +43,8 @@ void *producer(void *arg)
         pthread_mutex_lock(&mutex); // 공유 자원 접근을 위한 임계구역 설정
 
         /* semaphore로 buffer의 full, empty 처리해주기 때문에 필요 X
-        while(counter == MAX_BUF) usleep(10000);
+        if (counter == MAX_BUF)
+            pthread_cond_wait(&buffer_has_space, &mutex);
         */
 
         data = rand() % 0xFFFF; // 난수 생성 및 저장
@@ -48,9 +52,13 @@ void *producer(void *arg)
         in = (in + 1) % MAX_BUF; // circular buffer를 위한 mod 연산
         buffer[in] = data;
 
-        counter++; // 공유 변수 값 설정
+        counter++; // cicular buffer 내 data 증가
 
         printf("producer # %ld => in: %d, counter: %d, data: %d\n", tid, in, counter, data);
+
+        /* semaphore로 buffer의 full, empty 처리해주기 때문에 필요 X
+        pthread_cond_signal(&buffer_has_data);
+        */
 
         pthread_mutex_unlock(&mutex); // 임계 구역 종료
 
@@ -78,15 +86,20 @@ void *consumer(void *arg)
         pthread_mutex_lock(&mutex); // circular buffer를 위한 mod 연산
 
         /* semaphore로 buffer의 full, empty 처리해주기 때문에 필요 X
-        while(counter == 0) usleep(10000);
+        if (counter == 0)
+            pthread_cond_wait(&buffer_has_data, &mutex);
         */
 
         out = (out + 1) % MAX_BUF; // 공유 자원 접근을 위한 임계구역 설정
         data = buffer[out];
 
-        counter--; // 공유 변수 값 설정
+        counter--; // cicular buffer 내 data 감소
 
         printf("consumer # %ld => out: %d, counter: %d, data: %d\n", tid, out, counter, data);
+
+        /* semaphore로 buffer의 full, empty 처리해주기 때문에 필요 X
+        pthread_cond_signal(&buffer_has_space);
+        */
 
         pthread_mutex_unlock(&mutex);
 
